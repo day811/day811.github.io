@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yves Dangel — Data Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ── Reset & Tokens ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0c0e13;
+    --bg2:       #121620;
+    --bg3:       #1a1f2e;
+    --border:    rgba(99,212,194,0.18);
+    --accent:    #63d4c2;
+    --accent2:   #e85d5d;
+    --accent3:   #f5c842;
+    --text:      #dde3f0;
+    --muted:     #7a849c;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Sora', sans-serif;
+    --radius:    8px;
+    --gap:       clamp(2rem, 5vw, 5rem);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid background ────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,212,194,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,212,194,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Nav ────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(12,14,19,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Sections wrapper ───────────────────────────────── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--gap) 2rem;
+  }
+
+  /* ── Hero ───────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fade-up 0.6s 0.2s ease both;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: fade-up 0.7s 0.4s ease both;
+  }
+
+  h1 .name-main { color: var(--text); }
+  h1 .name-accent { color: var(--accent); }
+
+  .hero-tagline {
+    margin-top: 1.5rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--muted);
+    max-width: 600px;
+    opacity: 0;
+    animation: fade-up 0.7s 0.6s ease both;
+  }
+
+  .hero-tagline strong { color: var(--text); }
+
+  .hero-stats {
+    margin-top: 3rem;
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fade-up 0.7s 0.8s ease both;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: var(--mono);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    font-family: var(--mono);
+  }
+
+  .hero-links {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fade-up 0.7s 1s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0c0e13;
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #8ee8db; transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); background: rgba(99,212,194,0.07); transform: translateY(-2px); }
+
+  .hero-scroll {
+    margin-top: 5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0;
+    animation: fade-up 0.7s 1.2s ease both;
+  }
+  .hero-scroll::before {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(var(--accent), transparent);
+  }
+
+  /* ── Section Headers ────────────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  /* ── ADN / Stack ────────────────────────────────────── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .stack-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .stack-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .stack-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-title {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: var(--bg3);
+    color: var(--muted);
+    border: 1px solid rgba(99,212,194,0.1);
+    transition: all 0.15s;
+  }
+  .tag:hover { color: var(--accent); border-color: var(--border); }
+
+  /* ── Timeline ───────────────────────────────────────── */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(var(--accent), var(--border) 70%, transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    padding-bottom: 2.5rem;
+    cursor: pointer;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2.35rem;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .tl-item:hover::before {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+
+  .tl-year {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+  }
+
+  .tl-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.1rem;
+  }
+
+  .tl-org {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .tl-body {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .tl-item.open .tl-body {
+    max-height: 300px;
+    opacity: 1;
+  }
+
+  .tl-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+
+  /* ── Projects Grid ──────────────────────────────────── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  .project-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .project-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .badge-done   { background: rgba(99,212,194,0.12); color: var(--accent); }
+  .badge-wip    { background: rgba(245,200,66,0.12); color: var(--accent3); }
+  .badge-mvp    { background: rgba(232,93,93,0.15); color: var(--accent2); }
+
+  .project-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .project-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .project-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .project-link {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+  .project-link:hover { opacity: 1; }
+
+  /* ── Terminal block ─────────────────────────────────── */
+  .terminal {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .t-prompt { color: var(--accent); }
+  .t-cmd    { color: var(--text); }
+  .t-out    { color: var(--muted); }
+  .t-str    { color: var(--accent3); }
+  .t-key    { color: var(--accent2); }
+
+  /* ── Contact ────────────────────────────────────────── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero-stats { gap: 1.5rem; }
+  }
+
+  .contact-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .contact-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .contact-icon { font-size: 1.2rem; color: var(--accent); }
+  .contact-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
+  .contact-value { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+  /* ── Footer ─────────────────────────────────────────── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ─────────────────────────────────────── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Scroll reveal ──────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Cursor blink ───────────────────────────────────── */
+  .blink {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 3px;
+    animation: blink-anim 1s step-end infinite;
+  }
+  @keyframes blink-anim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">YD<span>.dev</span></a>
+  <ul class="nav-links">
+    <li><a href="#adn">// stack</a></li>
+    <li><a href="#parcours">// parcours</a></li>
+    <li><a href="#projets">// projets</a></li>
+    <li><a href="#contact">// contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-eyebrow">&#x2022; disponible immédiatement &nbsp;—&nbsp; Occitanie, France</p>
+  <h1>
+    <span class="name-main">Yves<br>Dangel</span><span class="blink"></span>
+  </h1>
+  <p class="hero-tagline">
+    <strong>Data Engineer</strong> — 35 ans d'expérience systèmes & infra, aujourd'hui au service des architectures de données, du NLP et de l'IA générative. Je conçois des pipelines résilients, scalables, forgés par des décennies de production critique.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">35</span>
+      <span class="stat-label">ans d'infra &amp; prod</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">12<span style="font-size:1rem;color:var(--muted)">/13</span></span>
+      <span class="stat-label">projets RNCP7 validés</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">RAG</span>
+      <span class="stat-label">spécialisation LLM</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Azure</span>
+      <span class="stat-label">cloud principal</span>
+    </div>
+  </div>
+  <div class="hero-links">
+    <a class="btn btn-primary" href="https://github.com/day811" target="_blank">→ GitHub</a>
+    <a class="btn btn-outline" href="https://linkedin.com/in/yves-dangel" target="_blank">LinkedIn</a>
+    <a class="btn btn-outline" href="#projets">Voir les projets</a>
+  </div>
+  <div class="hero-scroll">SCROLL TO EXPLORE</div>
+</section>
+
+
+<!-- ADN / STACK -->
+<section id="adn">
+  <div class="section-header reveal">
+    <span class="section-tag">// 01 — stack ADN</span>
+    <div class="section-line"></div>
+    <span class="section-num">skills</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">Ce que je construis</h2>
+
+  <div class="stack-grid">
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">🔩</div>
+      <div class="stack-title">Data Engineering</div>
+      <div class="skill-tags">
+        <span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">PySpark</span>
+        <span class="tag">SQL</span><span class="tag">Kestra</span><span class="tag">Airbyte</span>
+        <span class="tag">Docker</span><span class="tag">Git</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">🧠</div>
+      <div class="stack-title">LLM &amp; RAG</div>
+      <div class="skill-tags">
+        <span class="tag">LangChain</span><span class="tag">FAISS</span><span class="tag">Azure AI Search</span>
+        <span class="tag">Gemini</span><span class="tag">GPT-4o</span><span class="tag">Mistral</span>
+        <span class="tag">Chainlit</span><span class="tag">FastAPI</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">☁️</div>
+      <div class="stack-title">Cloud &amp; Infra</div>
+      <div class="skill-tags">
+        <span class="tag">Azure Container Apps</span><span class="tag">Azure Cosmos DB</span>
+        <span class="tag">Azure OpenAI</span><span class="tag">AWS</span>
+        <span class="tag">Blob Storage</span><span class="tag">PostgreSQL</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">🗄️</div>
+      <div class="stack-title">Bases de données</div>
+      <div class="skill-tags">
+        <span class="tag">MongoDB</span><span class="tag">DB2</span><span class="tag">MySQL</span>
+        <span class="tag">NoSQL</span><span class="tag">Vectoriel</span><span class="tag">AS400</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">📊</div>
+      <div class="stack-title">Analytics &amp; ML</div>
+      <div class="skill-tags">
+        <span class="tag">Scikit-learn</span><span class="tag">Plotly</span>
+        <span class="tag">Matplotlib</span><span class="tag">Dash</span>
+        <span class="tag">Folium</span><span class="tag">NumPy</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal">
+      <div class="stack-icon">🏗️</div>
+      <div class="stack-title">Systèmes &amp; Réseau</div>
+      <div class="skill-tags">
+        <span class="tag">Windows Server</span><span class="tag">Linux</span>
+        <span class="tag">MPLS</span><span class="tag">IPBX</span>
+        <span class="tag">SAP</span><span class="tag">VBA</span><span class="tag">PHP</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- PARCOURS -->
+<section id="parcours">
+  <div class="section-header reveal">
+    <span class="section-tag">// 02 — parcours</span>
+    <div class="section-line"></div>
+    <span class="section-num">timeline</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:0.5rem;">L'évolution d'une expertise</h2>
+  <p class="reveal" style="color:var(--muted);margin-bottom:2.5rem;font-size:0.9rem;">Cliquez sur un item pour en savoir plus.</p>
+
+  <div class="timeline">
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">2024 — aujourd'hui</div>
+      <div class="tl-title">Data Engineer — Formation RNCP Niveau 7</div>
+      <div class="tl-org">OpenClassrooms · Occitanie</div>
+      <div class="tl-body">
+        12/13 projets validés (fin prévue : 8 juin 2026). Spécialisation en architectures RAG, pipelines de données cloud, NLP et déploiement Azure. Projet phare P13 : transformation d'un POC en MVP chatbot événementiel scalable à l'échelle nationale.
+        <div class="tl-tags">
+          <span class="tag">Python</span><span class="tag">Azure</span><span class="tag">LangChain</span><span class="tag">Docker</span><span class="tag">RAG</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">2022 — 2023</div>
+      <div class="tl-title">Support &amp; Infrastructure IT</div>
+      <div class="tl-org">Miléade — 36 Villages Vacances &amp; Hôtels</div>
+      <div class="tl-body">
+        Supervision d'infrastructures multi-sites. Gestion des incidents critiques et coordination prestataires. Support 300 utilisateurs sur 36 sites (applicatifs PMS, CRM, BRS). Gestion réseau MPLS et téléphonie IPBX/Centrex.
+        <div class="tl-tags">
+          <span class="tag">Windows Server</span><span class="tag">MPLS</span><span class="tag">IPBX</span><span class="tag">O365</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">2005 — 2017</div>
+      <div class="tl-title">Entrepreneur — Aude-Line Informatique</div>
+      <div class="tl-org">Couiza, Aude (11)</div>
+      <div class="tl-body">
+        Services IT aux entreprises et particuliers en Haute Vallée de l'Aude. Centralisation de données hétérogènes vers BdD structurée. Automatisation documentaire (PDF multilingues, données réglementaires). Solutions VBA MS Office, applications web PHP/Nooku, intégration audio Python.
+        <div class="tl-tags">
+          <span class="tag">PHP</span><span class="tag">VBA</span><span class="tag">Python</span><span class="tag">MySQL</span><span class="tag">Joomla</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">2000 — 2003</div>
+      <div class="tl-title">Directeur des Opérations</div>
+      <div class="tl-org">IDEM SA — Location matériels informatiques, Toulouse</div>
+      <div class="tl-body">
+        Management de 25 personnes (services technique, logistique, stock). 25 000 rotations/an. Création d'un SAV interne affilié HP et Fujitsu-Siemens. Mise en place tableaux de bord et indicateurs qualité ISO 9001.
+        <div class="tl-tags">
+          <span class="tag">Management</span><span class="tag">ISO 9001</span><span class="tag">Windows 2000</span><span class="tag">Reporting</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">1999 — 2000 &amp; 1998</div>
+      <div class="tl-title">Admin SAP / AS400 &amp; Exploitation</div>
+      <div class="tl-org">EDS-SOLTIM (Siemens) · La Dépêche du Midi · Groupama</div>
+      <div class="tl-body">
+        Administration serveurs SAP et AS400/GCOS7. Exploitation systèmes VM et Netware. Développement RPG. Infogérance pour Siemens-Automotive.
+        <div class="tl-tags">
+          <span class="tag">SAP</span><span class="tag">AS400</span><span class="tag">DB2</span><span class="tag">RPG</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal" onclick="toggle(this)">
+      <div class="tl-year">1990 — 1992</div>
+      <div class="tl-title">Responsable Informatique Régional</div>
+      <div class="tl-org">Calberson Sud-Est — 10 agences</div>
+      <div class="tl-body">
+        Maintenance système et réseaux AS400 + 100 passifs. Exploitation DB2. Développement sous l'AGL Adélia. Pilotage mise en place automate d'exploitation SOPRA.
+        <div class="tl-tags">
+          <span class="tag">AS400</span><span class="tag">DB2</span><span class="tag">Adélia</span><span class="tag">Réseaux</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- PROJETS -->
+<section id="projets">
+  <div class="section-header reveal">
+    <span class="section-tag">// 03 — projets data</span>
+    <div class="section-line"></div>
+    <span class="section-num">RNCP7</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:0.5rem;">Portfolio OpenClassrooms</h2>
+  <p class="reveal" style="color:var(--muted);margin-bottom:2.5rem;font-size:0.9rem;">Formation Data Engineer — 12 projets validés sur 13.</p>
+
+  <div class="projects-grid">
+
+    <div class="project-card reveal" onclick="window.open('puls-events.html','_blank')">
+      <div class="project-header">
+        <span class="project-num">P13</span>
+        <span class="project-badge badge-mvp">MVP</span>
+      </div>
+      <div class="project-title">Puls-Events AI — Chatbot RAG National</div>
+      <div class="project-desc">Transformation d'un POC en MVP scalable. Pipeline d'ingestion national (OpenAgenda → Azure AI Search), chatbot conversationnel Chainlit, déploiement containerisé sur Azure Container Apps.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">FastAPI</span><span class="tag">Chainlit</span><span class="tag">Azure</span><span class="tag">LangChain</span><span class="tag">CosmosDB</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" onclick="window.open('https://github.com/day811/OCDE-P12','_blank')">
+      <div class="project-header">
+        <span class="project-num">P12</span>
+        <span class="project-badge badge-done">✓ validé</span>
+      </div>
+      <div class="project-title">Infrastructure de données — Automatisation</div>
+      <div class="project-desc">Création et automatisation d'une architecture de données. Pipeline de bout en bout : ingestion, transformation, chargement, tests qualité et monitoring continu.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">Kestra</span><span class="tag">Docker</span><span class="tag">AWS</span><span class="tag">Monitoring</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" onclick="window.open('https://github.com/day811/OCDE-P11','_blank')">
+      <div class="project-header">
+        <span class="project-num">P11</span>
+        <span class="project-badge badge-done">✓ validé</span>
+      </div>
+      <div class="project-title">Moteur de recherche RAG pour LLM</div>
+      <div class="project-desc">Conception d'un système de recherche augmentée. Vectorisation, retrieval sémantique avec FAISS, interface conversationnelle Streamlit. POC qui a donné naissance à P13.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">LangChain</span><span class="tag">FAISS</span><span class="tag">Streamlit</span><span class="tag">NLP</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" onclick="window.open('https://github.com/day811/OCDE-P10','_blank')">
+      <div class="project-header">
+        <span class="project-num">P10</span>
+        <span class="project-badge badge-done">✓ validé</span>
+      </div>
+      <div class="project-title">Orchestration avec Kestra</div>
+      <div class="project-desc">Workflows Kestra pour automatisation de flux de données complexes. Orchestration d'ingestion, transformation et alerting en environnement conteneurisé.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">Kestra</span><span class="tag">YAML</span><span class="tag">Docker</span><span class="tag">Python</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" onclick="window.open('https://github.com/day811/OCDE-P9','_blank')">
+      <div class="project-header">
+        <span class="project-num">P09</span>
+        <span class="project-badge badge-done">✓ validé</span>
+      </div>
+      <div class="project-title">Architecture Cloud Hybride Résiliente</div>
+      <div class="project-desc">Modélisation d'une architecture data multi-régions AWS avec failover. Conception du plan de reprise d'activité, SLA et dimensionnement pour charge nationale.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">AWS</span><span class="tag">Multi-région</span><span class="tag">RDS</span><span class="tag">Failover</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" onclick="window.open('https://github.com/day811/OCDE-P7','_blank')">
+      <div class="project-header">
+        <span class="project-num">P07</span>
+        <span class="project-badge badge-done">✓ validé</span>
+      </div>
+      <div class="project-title">Base de données NoSQL distribuée</div>
+      <div class="project-desc">MongoDB en configuration replica set et sharding. Déploiement, optimisation des requêtes, gestion de la cohérence dans un contexte distribué.</div>
+      <div class="skill-tags" style="margin-top:0.5rem;">
+        <span class="tag">MongoDB</span><span class="tag">Sharding</span><span class="tag">Replica Set</span><span class="tag">NoSQL</span>
+      </div>
+      <div class="project-footer">
+        <a class="project-link" href="https://github.com/day811" target="_blank">→ GitHub</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- TERMINAL BIO -->
+<section id="bio">
+  <div class="section-header reveal">
+    <span class="section-tag">// 04 — qui suis-je ?</span>
+    <div class="section-line"></div>
+    <span class="section-num">bio</span>
+  </div>
+
+  <div class="terminal reveal">
+    <div><span class="t-prompt">$ </span><span class="t-cmd">cat profile.json</span></div>
+    <div style="margin-top:0.75rem;">
+      <span class="t-out">{</span><br>
+      &nbsp;&nbsp;<span class="t-key">"nom"</span>: <span class="t-str">"Yves Dangel"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"titre"</span>: <span class="t-str">"Data Engineer — RNCP Niveau 7 (Bac+5)"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"localisation"</span>: <span class="t-str">"Occitanie, France"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"disponibilite"</span>: <span class="t-str">"immédiate"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"force_differenciante"</span>: <span class="t-str">"35 ans de gestion systèmes critiques + Data/IA"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"specialisation"</span>: [<span class="t-str">"RAG"</span>, <span class="t-str">"Azure AI Search"</span>, <span class="t-str">"LLM pipelines"</span>],<br>
+      &nbsp;&nbsp;<span class="t-key">"langues"</span>: {<span class="t-str">"fr"</span>: <span class="t-str">"natif"</span>, <span class="t-str">"en"</span>: <span class="t-str">"C1 professionnel"</span>},<br>
+      &nbsp;&nbsp;<span class="t-key">"github"</span>: <span class="t-str">"github.com/day811"</span>,<br>
+      &nbsp;&nbsp;<span class="t-key">"linkedin"</span>: <span class="t-str">"linkedin.com/in/yves-dangel"</span><br>
+      <span class="t-out">}</span>
+    </div>
+    <div style="margin-top:1rem;"><span class="t-prompt">$ </span><span class="t-cmd">_</span><span class="blink"></span></div>
+  </div>
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-tag">// 05 — contact</span>
+    <div class="section-line"></div>
+    <span class="section-num">get in touch</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">Parlons data</h2>
+
+  <div class="contact-grid reveal">
+    <a class="contact-item" href="mailto:yves.dangel@laposte.net">
+      <span class="contact-icon">✉</span>
+      <div>
+        <div class="contact-label">EMAIL</div>
+        <div class="contact-value">yves.dangel@laposte.net</div>
+      </div>
+    </a>
+    <a class="contact-item" href="tel:+33633198816">
+      <span class="contact-icon">☎</span>
+      <div>
+        <div class="contact-label">TÉLÉPHONE</div>
+        <div class="contact-value">+33 6 33 19 88 16</div>
+      </div>
+    </a>
+    <a class="contact-item" href="https://github.com/day811" target="_blank">
+      <span class="contact-icon">⌥</span>
+      <div>
+        <div class="contact-label">GITHUB</div>
+        <div class="contact-value">github.com/day811</div>
+      </div>
+    </a>
+    <a class="contact-item" href="https://linkedin.com/in/yves-dangel" target="_blank">
+      <span class="contact-icon">in</span>
+      <div>
+        <div class="contact-label">LINKEDIN</div>
+        <div class="contact-value">linkedin.com/in/yves-dangel</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>Yves Dangel &nbsp;·&nbsp; Data Engineer &nbsp;·&nbsp; Occitanie &nbsp;·&nbsp; 2026</p>
+  <p style="margin-top:0.4rem;font-size:0.65rem;opacity:0.5;">Construit avec HTML/CSS/JS &nbsp;—&nbsp; sans framework</p>
+</footer>
+
+<script>
+  /* Scroll reveal */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  /* Timeline toggle */
+  function toggle(el) {
+    const wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.tl-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) el.classList.add('open');
+  }
+
+  /* Stagger reveal cards */
+  document.querySelectorAll('.projects-grid .project-card').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.08) + 's';
+  });
+  document.querySelectorAll('.stack-grid .stack-card').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.06) + 's';
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puls-Events AI — Projet P13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0c0e13;
+    --bg2:       #121620;
+    --bg3:       #1a1f2e;
+    --border:    rgba(99,212,194,0.18);
+    --accent:    #63d4c2;
+    --accent2:   #e85d5d;
+    --accent3:   #f5c842;
+    --text:      #dde3f0;
+    --muted:     #7a849c;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Sora', sans-serif;
+    --radius:    8px;
+    --gap:       clamp(2rem, 5vw, 5rem);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,212,194,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,212,194,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(12,14,19,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #0c0e13 !important;
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 700 !important;
+    transition: background 0.2s, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: #8ee8db !important; transform: translateY(-1px); }
+
+  /* ── Sections ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--gap) 2rem;
+  }
+
+  /* ── Hero ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fade-up 0.6s 0.2s ease both;
+  }
+
+  .hero-eyebrow .back-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    margin-right: 1rem;
+  }
+  .hero-eyebrow .back-link:hover { color: var(--accent); }
+
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: fade-up 0.7s 0.4s ease both;
+  }
+
+  .hero-sub {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+    opacity: 0;
+    animation: fade-up 0.7s 0.5s ease both;
+  }
+
+  .hero-tagline {
+    margin-top: 1.5rem;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 680px;
+    opacity: 0;
+    animation: fade-up 0.7s 0.6s ease both;
+  }
+  .hero-tagline strong { color: var(--text); }
+
+  .hero-badges {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fade-up 0.7s 0.7s ease both;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--bg2);
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fade-up 0.7s 0.9s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0c0e13;
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #8ee8db; transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); background: rgba(99,212,194,0.07); transform: translateY(-2px); }
+
+  /* ── Section headers ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .section-num { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+
+  h2 {
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Context cards ── */
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .ctx-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+  .ctx-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .ctx-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .ctx-value.accent { color: var(--accent); font-family: var(--mono); }
+
+  /* ── Architecture diagram ── */
+  .arch-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    overflow-x: auto;
+  }
+
+  .arch-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .arch-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .arch-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .arch-box.accent { border-color: var(--accent); color: var(--accent); }
+  .arch-box.warn   { border-color: var(--accent3); color: var(--accent3); }
+  .arch-box.danger { border-color: var(--accent2); color: var(--accent2); }
+
+  .arch-arrow {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .arch-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.25rem 0;
+    position: relative;
+  }
+  .arch-divider::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg2);
+    padding: 0 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Feature cards ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .feat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feat-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+  .feat-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+  .feat-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .feat-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+  /* ── Stack table ── */
+  .stack-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .stack-table th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .stack-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(99,212,194,0.06);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .stack-table tr:last-child td { border-bottom: none; }
+  .stack-table tr:hover td { background: rgba(99,212,194,0.03); }
+
+  .stack-component {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  /* ── CTA section ── */
+  #demo {
+    text-align: center;
+  }
+  .demo-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .demo-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .demo-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  .demo-note {
+    margin-top: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .blink {
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 3px;
+    animation: blink-anim 1s step-end infinite;
+  }
+  @keyframes blink-anim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">YD<span>.dev</span></a>
+  <ul class="nav-links">
+    <li><a href="#contexte">// contexte</a></li>
+    <li><a href="#architecture">// architecture</a></li>
+    <li><a href="#features">// fonctionnalités</a></li>
+    <li><a href="#stack">// stack</a></li>
+    <li><a href="https://YOUR-CHAINLIT-URL.azurecontainerapps.io" target="_blank" class="nav-cta">→ Accéder au chatbot</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-eyebrow">
+    <a href="index.html" class="back-link">← portfolio</a>
+    &#x2022; projet P13 &nbsp;—&nbsp; RNCP Niveau 7
+  </p>
+  <h1>Puls-Events<span class="blink"></span></h1>
+  <p class="hero-sub">// moteur de recommandation culturelle — RAG national</p>
+  <p class="hero-tagline">
+    Transformation d'un <strong>POC régional</strong> en <strong>MVP scalable à l'échelle nationale</strong>. Un chatbot conversationnel qui comprend vos envies culturelles et recommande des événements en temps réel, avec mémoire et contexte géographique.
+  </p>
+  <div class="hero-badges">
+    <span class="badge">FastAPI</span>
+    <span class="badge">Chainlit</span>
+    <span class="badge">LangChain</span>
+    <span class="badge">Azure AI Search</span>
+    <span class="badge">Azure OpenAI</span>
+    <span class="badge">Cosmos DB</span>
+    <span class="badge">Docker</span>
+    <span class="badge">Azure Container Apps</span>
+    <span class="badge">RAG</span>
+    <span class="badge">Hybrid Search</span>
+  </div>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="https://YOUR-CHAINLIT-URL.azurecontainerapps.io" target="_blank">→ Accéder au chatbot</a>
+    <a class="btn btn-outline" href="https://github.com/day811/OCDE-P13" target="_blank">Code source GitHub</a>
+    <a class="btn btn-outline" href="#architecture">Voir l'architecture</a>
+  </div>
+</section>
+
+
+<!-- CONTEXTE -->
+<section id="contexte">
+  <div class="section-header reveal">
+    <span class="section-tag">// 01 — contexte</span>
+    <div class="section-line"></div>
+    <span class="section-num">du POC au MVP</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:1rem;">Le défi</h2>
+  <p class="reveal" style="color:var(--muted);max-width:700px;font-size:0.95rem;">
+    Suite à un POC validé en Occitanie, l'objectif était de corriger les limites du prototype et de passer à une architecture de production supportant la France entière, avec des utilisateurs simultanés et des données en temps réel.
+  </p>
+
+  <div class="context-grid reveal">
+    <div class="ctx-card">
+      <div class="ctx-label">Couverture géographique</div>
+      <div class="ctx-value accent">POC → France</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Index vectoriel</div>
+      <div class="ctx-value accent">FAISS → Azure AI Search</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Résultats hors-fenêtre</div>
+      <div class="ctx-value accent">90% → 0%</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Mémoire conversationnelle</div>
+      <div class="ctx-value accent">absente → persistée</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Ingestion</div>
+      <div class="ctx-value accent">manuelle → automatisée 3h/jour</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Authentification</div>
+      <div class="ctx-value accent">aucune → Cosmos DB</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-header reveal">
+    <span class="section-tag">// 02 — architecture</span>
+    <div class="section-line"></div>
+    <span class="section-num">cloud Azure</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">Infrastructure micro-services</h2>
+
+  <div class="arch-container reveal">
+
+    <div class="arch-label">couche utilisateur</div>
+    <div class="arch-row">
+      <div class="arch-box">Navigateur</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box accent">Chainlit UI · port 8001</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box accent">FastAPI · port 8000</div>
+    </div>
+
+    <div class="arch-divider" data-label="Azure Container Apps"></div>
+
+    <div class="arch-label">couche intelligence — SeekEngine</div>
+    <div class="arch-row">
+      <div class="arch-box warn">Query Parser</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box warn">Condense Query (LLM)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box warn">Hybrid Search</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box warn">Validate + Stream</div>
+    </div>
+
+    <div class="arch-divider" data-label="services Azure managés"></div>
+
+    <div class="arch-label">couche données</div>
+    <div class="arch-row">
+      <div class="arch-box">Azure AI Search<br><small style="color:var(--muted);font-size:0.6rem;">index vectoriel hybride</small></div>
+      <div class="arch-arrow">&nbsp;</div>
+      <div class="arch-box">Azure OpenAI<br><small style="color:var(--muted);font-size:0.6rem;">GPT-4o + embeddings</small></div>
+      <div class="arch-arrow">&nbsp;</div>
+      <div class="arch-box">Cosmos DB<br><small style="color:var(--muted);font-size:0.6rem;">users + settings</small></div>
+      <div class="arch-arrow">&nbsp;</div>
+      <div class="arch-box">PostgreSQL<br><small style="color:var(--muted);font-size:0.6rem;">historique Chainlit</small></div>
+      <div class="arch-arrow">&nbsp;</div>
+      <div class="arch-box">Blob Storage<br><small style="color:var(--muted);font-size:0.6rem;">bronze / silver / gold</small></div>
+    </div>
+
+    <div class="arch-divider" data-label="ingestion automatisée — cron 03:00"></div>
+
+    <div class="arch-label">pipeline d'ingestion (Container App Job)</div>
+    <div class="arch-row">
+      <div class="arch-box danger">OpenAgenda API</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">Bronze (raw JSON)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">Silver (Pydantic)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">Gold (vectorisé)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box accent">Azure AI Search</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header reveal">
+    <span class="section-tag">// 03 — fonctionnalités</span>
+    <div class="section-line"></div>
+    <span class="section-num">MVP</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">Ce que le chatbot sait faire</h2>
+
+  <div class="features-grid">
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">🧠</div>
+      <div class="feat-title">Recherche hybride sémantique + temporelle</div>
+      <div class="feat-desc">Comprend "ce weekend à Montpellier" ou "un concert de jazz la semaine prochaine". Filtre OData sur les métadonnées pour garantir 100% de résultats dans la fenêtre demandée.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">💬</div>
+      <div class="feat-title">Mémoire conversationnelle</div>
+      <div class="feat-desc">Historique des échanges persisté en PostgreSQL via Chainlit. Condensation automatique des questions de suivi en requêtes autonomes pour le retrieval.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">📍</div>
+      <div class="feat-title">Contexte géographique personnalisé</div>
+      <div class="feat-desc">Chaque utilisateur configure sa ville et son département par défaut. Le parser extrait les entités géographiques des requêtes et les priorise sur les préférences.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">🔄</div>
+      <div class="feat-title">Ingestion incrémentale automatique</div>
+      <div class="feat-desc">Container App Job déclenché chaque nuit à 3h. Stratégie high-watermark sur `updatedAt`. Upsert atomique dans Azure AI Search. Pipeline Bronze → Silver → Gold.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">🔐</div>
+      <div class="feat-title">Authentification sécurisée</div>
+      <div class="feat-desc">Comptes utilisateurs stockés dans Cosmos DB avec mots de passe hashés (bcrypt). Login natif Chainlit. Paramètres et quotas tokens par utilisateur.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Monitoring de la consommation</div>
+      <div class="feat-desc">Comptage des tokens par requête (prompt + completion) affiché en pied de chaque réponse. Cumul persisté par utilisateur dans Azure Blob Storage.</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- STACK -->
+<section id="stack">
+  <div class="section-header reveal">
+    <span class="section-tag">// 04 — stack technique</span>
+    <div class="section-line"></div>
+    <span class="section-num">choix justifiés</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">Technologies utilisées</h2>
+
+  <div class="arch-container reveal">
+    <table class="stack-table">
+      <thead>
+        <tr>
+          <th>Composant</th>
+          <th>Technologie</th>
+          <th>Justification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Interface conversationnelle</td>
+          <td><span class="stack-component">Chainlit</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Streaming natif, gestion historique, login intégré — aucun dev front requis</td>
+        </tr>
+        <tr>
+          <td>API backend</td>
+          <td><span class="stack-component">FastAPI + uvicorn</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Async natif, typage Pydantic, healthcheck Docker</td>
+        </tr>
+        <tr>
+          <td>Moteur RAG</td>
+          <td><span class="stack-component">LangChain</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Abstraction LLM/vectorstore, support Azure et local (FAISS) sans changement de code</td>
+        </tr>
+        <tr>
+          <td>Index vectoriel</td>
+          <td><span class="stack-component">Azure AI Search</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Recherche hybride (BM25 + vecteur) + filtres OData sur métadonnées temporelles</td>
+        </tr>
+        <tr>
+          <td>LLM</td>
+          <td><span class="stack-component">Azure OpenAI GPT-4o</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Déploiement managé Azure, conformité RGPD, streaming async</td>
+        </tr>
+        <tr>
+          <td>Embeddings</td>
+          <td><span class="stack-component">text-embedding-3-small</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Rapport qualité/coût optimal, 1536 dimensions</td>
+        </tr>
+        <tr>
+          <td>Mémoire utilisateurs</td>
+          <td><span class="stack-component">Cosmos DB</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">NoSQL schemaless, latence faible, SLA 99.99%</td>
+        </tr>
+        <tr>
+          <td>Historique conversations</td>
+          <td><span class="stack-component">PostgreSQL (Flexible Server)</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Requis par SQLAlchemyDataLayer de Chainlit</td>
+        </tr>
+        <tr>
+          <td>Stockage pipeline</td>
+          <td><span class="stack-component">Azure Blob Storage</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Bronze/Silver/Gold — pattern médaillon, coût minimal</td>
+        </tr>
+        <tr>
+          <td>Déploiement</td>
+          <td><span class="stack-component">Azure Container Apps</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Scale-to-zero, ingestion en Job schedulé, no k8s overhead</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- CTA DEMO -->
+<section id="demo">
+  <div class="demo-box reveal">
+    <div class="demo-title">Essayer le chatbot</div>
+    <p class="demo-desc">
+      L'instance de démonstration est déployée sur Azure Container Apps. Connectez-vous avec les identifiants fournis pour explorer les recommandations d'événements culturels en France.
+    </p>
+    <a class="btn btn-primary" href="https://YOUR-CHAINLIT-URL.azurecontainerapps.io" target="_blank" style="display:inline-flex;margin:0 auto;">
+      → Accéder à Puls-Events AI
+    </a>
+    <p class="demo-note">
+      Authentification requise &nbsp;·&nbsp; Données OpenAgenda — France entière &nbsp;·&nbsp; Fenêtre 12 mois
+    </p>
+  </div>
+</section>
+
+
+<footer>
+  <p>
+    <a href="index.html" style="color:var(--accent);text-decoration:none;">← Retour au portfolio</a>
+    &nbsp;·&nbsp; Yves Dangel &nbsp;·&nbsp; Projet P13 RNCP7 &nbsp;·&nbsp; 2026
+  </p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.feat-card').forEach((c, i) => {
+    c.style.transitionDelay = (i * 0.07) + 's';
+  });
+</script>
+
+</body>
+</html>
