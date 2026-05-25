@@ -64,6 +64,10 @@
     <span class="badge">Azure Container Apps</span>
     <span class="badge">RAG</span>
     <span class="badge">Hybrid Search</span>
+    <span class="badge">smolagents</span>
+    <span class="badge">DuckDuckGo Search</span>
+    <span class="badge">Grafana Cloud</span>
+    <span class="badge">Prometheus</span>
   </div>
   <div class="hero-cta">
     <a class="btn btn-primary" href="https://pulsevents-ui.happycoast-9fcef733.francecentral.azurecontainerapps.io/" target="_blank">→ Accéder au chatbot</a>
@@ -108,8 +112,16 @@
       <div class="ctx-value accent">manuelle → automatisée 3h/jour</div>
     </div>
     <div class="ctx-card">
-      <div class="ctx-label">Authentification</div>
-      <div class="ctx-value accent">aucune → Cosmos DB</div>
+      <div class="ctx-label">Fallback web</div>
+      <div class="ctx-value accent">absent → smolagents DDG</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Monitoring</div>
+      <div class="ctx-value accent">Grafana Cloud + PostgreSQL</div>
+    </div>
+    <div class="ctx-card">
+      <div class="ctx-label">Index événements</div>
+      <div class="ctx-value accent">93k documents</div>
     </div>
   </div>
 </section>
@@ -143,9 +155,11 @@
       <div class="arch-arrow">→</div>
       <div class="arch-box warn">Condense Query (LLM)</div>
       <div class="arch-arrow">→</div>
-      <div class="arch-box warn">Hybrid Search</div>
-      <div class="arch-arrow">→</div>
-      <div class="arch-box warn">Validate + Stream</div>
+    <div class="arch-box warn">Hybrid Search</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box warn">Validate + Stream</div>
+    <div class="arch-arrow">⟶ fallback</div>
+    <div class="arch-box danger">smolagents DDG<small style="display:block;font-size:0.6rem;color:var(--muted);">si 0 résultats</small></div>
     </div>
 
     <div class="arch-divider" data-label="services Azure managés"></div>
@@ -228,7 +242,17 @@
       <div class="feat-title">Monitoring de la consommation</div>
       <div class="feat-desc">Comptage des tokens par requête (prompt + completion) affiché en pied de chaque réponse. Cumul persisté par utilisateur dans Azure Blob Storage.</div>
     </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🌐</div>
+      <div class="feat-title">Fallback recherche web (smolagents)</div>
+      <div class="feat-desc">Quand l'index Azure AI Search retourne zéro résultat, un agent smolagents déclenche une recherche DuckDuckGo restreinte à une whitelist de 10 sites événementiels français (billetweb, eventbrite, openagenda, fnacspectacles…). Initialisation lazy pour ne pas impacter le démarrage.</div>
+    </div>
 
+    <div class="feat-card reveal">
+      <div class="feat-icon">📡</div>
+      <div class="feat-title">Monitoring Grafana Cloud</div>
+      <div class="feat-desc">Stack de monitoring complète sur tier gratuit Grafana Cloud. Deux datasources : Azure Monitor (CPU, mémoire, replicas Container Apps — dashboards 16591/16592) et PostgreSQL custom (satisfaction 👍👎 Chainlit, latences RAG par phase, runs ingesteur, snapshots infrastructure Bronze/Silver/Gold).</div>
+    </div>
   </div>
 </section>
 
@@ -271,6 +295,16 @@
           <td>Index vectoriel</td>
           <td><span class="stack-component">Azure AI Search</span></td>
           <td style="color:var(--muted);font-size:0.82rem;">Recherche hybride (BM25 + vecteur) + filtres OData sur métadonnées temporelles</td>
+        </tr>
+        <tr>
+          <td>Fallback web</td>
+          <td><span class="stack-component">smolagents + DuckDuckGo</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Agent CodeAgent déclenché si index retourne 0 résultat — whitelist 10 sites événementiels FR</td>
+        </tr>
+        <tr>
+          <td>Monitoring</td>
+          <td><span class="stack-component">Grafana Cloud + asyncpg</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Azure Monitor (Container Apps) + panels custom PostgreSQL — latences RAG, satisfaction, infra snapshots</td>
         </tr>
         <tr>
           <td>LLM</td>

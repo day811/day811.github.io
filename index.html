@@ -25,6 +25,13 @@
   .tl-body  { font-size: 0.9rem; color: var(--muted); max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; }
   .tl-item.open .tl-body { max-height: 300px; opacity: 1; }
   .tl-tags  { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+  .stack-card.muted { border-color: rgba(122,132,156,0.25); }
+  .stack-card.muted .stack-title { color: var(--muted); }
+  .stack-legend { margin-top: 2rem; display: flex; gap: 2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  .stack-legend span::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.4rem; vertical-align: middle; }
+  .stack-legend .l-deep::before  { background: var(--accent); }
+  .stack-legend .l-solid::before { background: var(--accent3); }
+  .stack-legend .l-base::before  { background: var(--muted); }  
 </style>
 
 </head>
@@ -78,55 +85,49 @@
 
 
 <!-- ADN / STACK -->
+<!-- CE QUE J'APPORTE -->
 <section id="adn">
   <div class="section-header reveal">
-    <span class="section-tag">// 01 — stack ADN</span>
+    <span class="section-tag">// 01 — ce que j'apporte</span>
     <div class="section-line"></div>
-    <span class="section-num">skills</span>
+    <span class="section-num">compétences</span>
   </div>
-  <h2 class="reveal" style="margin-bottom:2rem;">Ce que je construis</h2>
+  <h2 class="reveal" style="margin-bottom:0.5rem;">Ce que j'apporte</h2>
+  <p class="reveal" style="color:var(--muted);font-size:0.85rem;margin-bottom:2rem;max-width:650px;">
+    35 ans de terrain forgent une culture informatique transversale. La formation Data Engineer est venue s'y greffer — pas la remplacer.
+  </p>
 
   <div class="stack-grid">
 
+    <!-- ── SOCLE PROFOND ── -->
+
     <div class="stack-card reveal">
-      <div class="stack-icon">🔩</div>
-      <div class="stack-title">Data Engineering</div>
+      <div class="stack-icon">🔍</div>
+      <div class="stack-title">Analyse & Architecture</div>
       <div class="skill-tags">
-        <span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">PySpark</span>
-        <span class="tag">SQL</span><span class="tag">Kestra</span><span class="tag">Airbyte</span>
-        <span class="tag">Docker</span><span class="tag">Git</span>
+        <span class="tag">Analyse des besoins</span><span class="tag">Cahier des charges</span>
+        <span class="tag">Modélisation données</span><span class="tag">Architecture systèmes</span>
+        <span class="tag">Résolution de problèmes</span><span class="tag">Workarounds</span>
       </div>
     </div>
 
     <div class="stack-card reveal">
-      <div class="stack-icon">🧠</div>
-      <div class="stack-title">LLM &amp; RAG</div>
+      <div class="stack-icon">💻</div>
+      <div class="stack-title">Programmation & Web</div>
       <div class="skill-tags">
-        <span class="tag">LangChain</span><span class="tag">FAISS</span><span class="tag">Azure AI Search</span>
-        <span class="tag">Gemini</span><span class="tag">GPT-4o</span><span class="tag">Mistral</span>
-        <span class="tag">Chainlit</span><span class="tag">FastAPI</span>
+        <span class="tag">Python</span><span class="tag">PHP</span><span class="tag">VBA</span>
+        <span class="tag">JavaScript</span><span class="tag">SQL</span>
+        <span class="tag">RPG</span><span class="tag">C++</span><span class="tag">Pascal</span>
       </div>
     </div>
 
     <div class="stack-card reveal">
-      <div class="stack-icon">☁️</div>
-      <div class="stack-title">Azure</div>
+      <div class="stack-icon">🏗️</div>
+      <div class="stack-title">Systèmes & Réseau</div>
       <div class="skill-tags">
-        <span class="tag">Container Apps</span><span class="tag">AI Search</span>
-        <span class="tag">Azure OpenAI</span><span class="tag">Cosmos DB</span>
-        <span class="tag">Blob Storage</span><span class="tag">PostgreSQL</span>
-        <span class="tag">ACR</span>
-      </div>
-    </div>
- 
-    <div class="stack-card reveal">
-      <div class="stack-icon">🟠</div>
-      <div class="stack-title">AWS</div>
-      <div class="skill-tags">
-        <span class="tag">ECS Fargate</span><span class="tag">S3</span>
-        <span class="tag">Step Functions</span><span class="tag">EventBridge</span>
-        <span class="tag">Lambda</span><span class="tag">CloudWatch</span>
-        <span class="tag">ECR</span><span class="tag">VPC</span>
+        <span class="tag">Windows Server</span><span class="tag">Linux</span>
+        <span class="tag">AS400</span><span class="tag">MPLS</span><span class="tag">IPBX</span>
+        <span class="tag">SAP</span><span class="tag">Maintenance</span><span class="tag">Support</span>
       </div>
     </div>
 
@@ -134,33 +135,54 @@
       <div class="stack-icon">🗄️</div>
       <div class="stack-title">Bases de données</div>
       <div class="skill-tags">
-        <span class="tag">MongoDB</span><span class="tag">DB2</span><span class="tag">MySQL</span>
-        <span class="tag">PostgreSQL</span><span class="tag">NoSQL</span><span class="tag">Vectoriel</span>
-        <span class="tag">MsAccess</span><span class="tag">DB2</span>
+        <span class="tag">MySQL</span><span class="tag">PostgreSQL</span><span class="tag">MongoDB</span>
+        <span class="tag">DB2</span><span class="tag">MsAccess</span>
+        <span class="tag">NoSQL</span><span class="tag">Modélisation</span>
       </div>
     </div>
 
-    <div class="stack-card reveal">
-      <div class="stack-icon">📊</div>
-      <div class="stack-title">Analytics &amp; ML</div>
+    <!-- ── ACQUIS EN FORMATION ── -->
+
+    <div class="stack-card reveal" style="border-color:rgba(245,200,66,0.3);">
+      <div class="stack-icon">🔩</div>
+      <div class="stack-title" style="color:var(--accent3);">Data Engineering</div>
       <div class="skill-tags">
-        <span class="tag">Scikit-learn</span><span class="tag">Plotly</span>
-        <span class="tag">Matplotlib</span><span class="tag">Dash</span>
-        <span class="tag">Folium</span><span class="tag">NumPy</span>
+        <span class="tag">Pandas</span><span class="tag">PySpark</span><span class="tag">Kestra</span>
+        <span class="tag">Docker</span><span class="tag">Delta Lake</span>
+        <span class="tag">Great Expectations</span><span class="tag">Debezium</span>
       </div>
     </div>
 
-    <div class="stack-card reveal">
-      <div class="stack-icon">🏗️</div>
-      <div class="stack-title">Systèmes &amp; Réseau</div>
+    <!-- ── NOTIONS / OUTILS UTILISÉS ── -->
+
+    <div class="stack-card reveal" style="border-color:rgba(122,132,156,0.25);">
+      <div class="stack-icon">☁️</div>
+      <div class="stack-title" style="color:var(--muted);">Cloud — Azure & AWS</div>
       <div class="skill-tags">
-        <span class="tag">Windows Server</span><span class="tag">Linux</span>
-        <span class="tag">MPLS</span><span class="tag">IPBX</span>
-        <span class="tag">SAP</span><span class="tag">VBA</span><span class="tag">PHP</span>
+        <span class="tag">Container Apps</span><span class="tag">AI Search</span>
+        <span class="tag">ECS Fargate</span><span class="tag">S3</span>
+        <span class="tag">Step Functions</span><span class="tag">Blob Storage</span>
+      </div>
+    </div>
+
+    <div class="stack-card reveal" style="border-color:rgba(122,132,156,0.25);">
+      <div class="stack-icon">🧠</div>
+      <div class="stack-title" style="color:var(--muted);">LLM & RAG</div>
+      <div class="skill-tags">
+        <span class="tag">LangChain</span><span class="tag">FAISS</span>
+        <span class="tag">Gemini</span><span class="tag">GPT-4o</span>
+        <span class="tag">Chainlit</span><span class="tag">FastAPI</span>
       </div>
     </div>
 
   </div>
+
+  <div class="stack-legend reveal">
+    <span class="l-deep">Socle profond — 35 ans</span>
+    <span class="l-solid">Acquis en formation</span>
+    <span class="l-base">Bases — outils utilisés en projet</span>
+  </div>
+
 </section>
 
 
