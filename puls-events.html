@@ -16,17 +16,65 @@
   .arch-box.accent { border-color: var(--accent);  color: var(--accent); }
   .arch-box.warn   { border-color: var(--accent3); color: var(--accent3); }
   .arch-box.danger { border-color: var(--accent2); color: var(--accent2); }
-  .arch-arrow     { font-size: 0.8rem; color: var(--muted); }
-  .arch-divider   { height: 1px; background: var(--border); margin: 1.25rem 0; position: relative; }
+  .arch-arrow      { font-size: 0.8rem; color: var(--muted); }
+  .arch-divider    { height: 1px; background: var(--border); margin: 1.25rem 0; position: relative; }
   .arch-divider::after { content: attr(data-label); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--bg2); padding: 0 0.75rem; font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
 
-  #demo      { text-align: center; }
-  .demo-box  { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 3rem 2rem; max-width: 600px; margin: 0 auto; }
-  .demo-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; }
-  .demo-desc  { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
-  .demo-note  { margin-top: 1.25rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
-</style>
+  /* Screenshot showcase */
+  .screenshot-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .screenshot-bar {
+    background: var(--bg3);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .screenshot-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .screenshot-dot.r { background: #e85d5d; }
+  .screenshot-dot.y { background: #f5c842; }
+  .screenshot-dot.g { background: #63d4c2; }
+  .screenshot-url {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+  .screenshot-container img {
+    width: 100%;
+    display: block;
+    opacity: 0.92;
+  }
+  .screenshot-caption {
+    padding: 0.75rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
 
+  /* Offline notice */
+  .offline-notice {
+    background: var(--bg2);
+    border: 1px solid rgba(245,200,66,0.3);
+    border-left: 3px solid var(--accent3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2rem;
+  }
+  .offline-notice strong { color: var(--accent3); }
+</style>
 </head>
 <body>
 
@@ -38,7 +86,7 @@
     <li><a href="#architecture">// architecture</a></li>
     <li><a href="#features">// fonctionnalités</a></li>
     <li><a href="#stack">// stack</a></li>
-    <li><a href="https://pulsevents-ui.happycoast-9fcef733.francecentral.azurecontainerapps.io/" target="_blank" class="nav-cta">→ Accéder au chatbot</a></li>
+    <li><a href="https://github.com/day811/OCDE-P13" target="_blank" class="nav-cta">→ GitHub</a></li>
   </ul>
 </nav>
 
@@ -51,7 +99,7 @@
   <h1>Puls-Events<span class="blink"></span></h1>
   <p class="hero-sub">// moteur de recommandation culturelle — RAG national</p>
   <p class="hero-tagline">
-    Transformation d'un <strong>POC régional</strong> en <strong>MVP scalable à l'échelle nationale</strong>. Un chatbot conversationnel qui comprend vos envies culturelles et recommande des événements en temps réel, avec mémoire et contexte géographique.
+    Transformation d'un <strong>POC régional</strong> en <strong>MVP scalable à l'échelle nationale</strong>. Un chatbot conversationnel qui comprend vos envies culturelles et recommande des événements en temps réel, avec mémoire conversationnelle, fallback web et monitoring complet.
   </p>
   <div class="hero-badges">
     <span class="badge">FastAPI</span>
@@ -67,13 +115,40 @@
     <span class="badge">smolagents</span>
     <span class="badge">DuckDuckGo Search</span>
     <span class="badge">Grafana Cloud</span>
-    <span class="badge">Prometheus</span>
+    <span class="badge">PostgreSQL</span>
   </div>
   <div class="hero-cta">
-    <a class="btn btn-primary" href="https://pulsevents-ui.happycoast-9fcef733.francecentral.azurecontainerapps.io/" target="_blank">→ Accéder au chatbot</a>
-    <a class="btn btn-outline" onclick="toggleCreds()" style="cursor:pointer;">🔑 Identifiants démo</a>
-    <a class="btn btn-outline" href="https://github.com/day811/OCDE-P13" target="_blank">Code source GitHub</a>
-    <a class="btn btn-outline" href="#architecture">Voir l'architecture</a>
+    <a class="btn btn-primary" href="https://github.com/day811/OCDE-P13" target="_blank">→ Code source GitHub</a>
+    <a class="btn btn-outline" href="#apercu">Aperçu interface</a>
+    <a class="btn btn-outline" href="#architecture">Architecture</a>
+  </div>
+
+  <div class="offline-notice reveal">
+    <strong>⚠ Instance Azure hors ligne</strong> — L'abonnement Azure ayant expiré, le service n'est plus accessible en ligne. Le code source complet reste disponible sur GitHub.
+  </div>
+</section>
+
+
+<!-- APERÇU INTERFACE -->
+<section id="apercu">
+  <div class="section-header reveal">
+    <span class="section-tag">// 01 — aperçu</span>
+    <div class="section-line"></div>
+    <span class="section-num">interface Chainlit</span>
+  </div>
+  <h2 class="reveal" style="margin-bottom:2rem;">L'interface en action</h2>
+
+  <div class="screenshot-container reveal">
+    <div class="screenshot-bar">
+      <span class="screenshot-dot r"></span>
+      <span class="screenshot-dot y"></span>
+      <span class="screenshot-dot g"></span>
+      <span class="screenshot-url">pulsevents-ui.happycoast-9fcef733.francecentral.azurecontainerapps.io</span>
+    </div>
+    <img src="chainlit.jpg" alt="Interface Puls-Events AI — chatbot de recommandation culturelle Chainlit" />
+    <div class="screenshot-caption">
+      Interface Chainlit déployée sur Azure Container Apps · Recommandations d'événements culturels · France entière · 93k événements indexés
+    </div>
   </div>
 </section>
 
@@ -81,13 +156,13 @@
 <!-- CONTEXTE -->
 <section id="contexte">
   <div class="section-header reveal">
-    <span class="section-tag">// 01 — contexte</span>
+    <span class="section-tag">// 02 — contexte</span>
     <div class="section-line"></div>
     <span class="section-num">du POC au MVP</span>
   </div>
   <h2 class="reveal" style="margin-bottom:1rem;">Le défi</h2>
   <p class="reveal" style="color:var(--muted);max-width:700px;font-size:0.95rem;">
-    Suite à un POC validé en Occitanie, l'objectif était de corriger les limites du prototype et de passer à une architecture de production supportant la France entière, avec des utilisateurs simultanés et des données en temps réel.
+    Suite à un POC validé en Occitanie (P11), l'objectif était de corriger les limites du prototype et de passer à une architecture de production supportant la France entière, avec des utilisateurs simultanés, un fallback web et un monitoring complet.
   </p>
 
   <div class="context-grid reveal">
@@ -109,10 +184,10 @@
     </div>
     <div class="ctx-card">
       <div class="ctx-label">Ingestion</div>
-      <div class="ctx-value accent">manuelle → automatisée 3h/jour</div>
+      <div class="ctx-value accent">manuelle → cron 3h/jour</div>
     </div>
     <div class="ctx-card">
-      <div class="ctx-label">Fallback web</div>
+      <div class="ctx-label">Fallback zéro résultat</div>
       <div class="ctx-value accent">absent → smolagents DDG</div>
     </div>
     <div class="ctx-card">
@@ -121,7 +196,7 @@
     </div>
     <div class="ctx-card">
       <div class="ctx-label">Index événements</div>
-      <div class="ctx-value accent">93k documents</div>
+      <div class="ctx-value accent">93 000 documents</div>
     </div>
   </div>
 </section>
@@ -130,7 +205,7 @@
 <!-- ARCHITECTURE -->
 <section id="architecture">
   <div class="section-header reveal">
-    <span class="section-tag">// 02 — architecture</span>
+    <span class="section-tag">// 03 — architecture</span>
     <div class="section-line"></div>
     <span class="section-num">cloud Azure</span>
   </div>
@@ -155,24 +230,24 @@
       <div class="arch-arrow">→</div>
       <div class="arch-box warn">Condense Query (LLM)</div>
       <div class="arch-arrow">→</div>
-    <div class="arch-box warn">Hybrid Search</div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-box warn">Validate + Stream</div>
-    <div class="arch-arrow">⟶ fallback</div>
-    <div class="arch-box danger">smolagents DDG<small style="display:block;font-size:0.6rem;color:var(--muted);">si 0 résultats</small></div>
+      <div class="arch-box warn">Hybrid Search</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box warn">Validate + Stream</div>
+      <div class="arch-arrow">→ fallback</div>
+      <div class="arch-box danger">smolagents DDG<br><small style="color:var(--muted);font-size:0.6rem;">si 0 résultats</small></div>
     </div>
 
     <div class="arch-divider" data-label="services Azure managés"></div>
 
     <div class="arch-label">couche données</div>
     <div class="arch-row">
-      <div class="arch-box">Azure AI Search<br><small style="color:var(--muted);font-size:0.6rem;">index vectoriel hybride</small></div>
+      <div class="arch-box">Azure AI Search<br><small style="color:var(--muted);font-size:0.6rem;">index vectoriel hybride · 93k docs</small></div>
       <div class="arch-arrow">&nbsp;</div>
       <div class="arch-box">Azure OpenAI<br><small style="color:var(--muted);font-size:0.6rem;">GPT-4o + embeddings</small></div>
       <div class="arch-arrow">&nbsp;</div>
       <div class="arch-box">Cosmos DB<br><small style="color:var(--muted);font-size:0.6rem;">users + settings</small></div>
       <div class="arch-arrow">&nbsp;</div>
-      <div class="arch-box">PostgreSQL<br><small style="color:var(--muted);font-size:0.6rem;">historique Chainlit</small></div>
+      <div class="arch-box">PostgreSQL<br><small style="color:var(--muted);font-size:0.6rem;">historique + télémétrie RAG</small></div>
       <div class="arch-arrow">&nbsp;</div>
       <div class="arch-box">Blob Storage<br><small style="color:var(--muted);font-size:0.6rem;">bronze / silver / gold</small></div>
     </div>
@@ -192,14 +267,25 @@
       <div class="arch-box accent">Azure AI Search</div>
     </div>
 
+    <div class="arch-divider" data-label="monitoring — Grafana Cloud"></div>
+
+    <div class="arch-label">observabilité</div>
+    <div class="arch-row">
+      <div class="arch-box">PostgreSQL<br><small style="color:var(--muted);font-size:0.6rem;">rag_telemetry · feedbacks · ingestor_runs</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box warn">Grafana Cloud<br><small style="color:var(--muted);font-size:0.6rem;">datasource PostgreSQL + Azure Monitor</small></div>
+      <div class="arch-arrow">&nbsp;</div>
+      <div class="arch-box">Azure Monitor<br><small style="color:var(--muted);font-size:0.6rem;">Container Apps CPU/mémoire/replicas</small></div>
+    </div>
+
   </div>
 </section>
 
 
-<!-- FEATURES -->
+<!-- FONCTIONNALITÉS -->
 <section id="features">
   <div class="section-header reveal">
-    <span class="section-tag">// 03 — fonctionnalités</span>
+    <span class="section-tag">// 04 — fonctionnalités</span>
     <div class="section-line"></div>
     <span class="section-num">MVP</span>
   </div>
@@ -211,6 +297,12 @@
       <div class="feat-icon">🧠</div>
       <div class="feat-title">Recherche hybride sémantique + temporelle</div>
       <div class="feat-desc">Comprend "ce weekend à Montpellier" ou "un concert de jazz la semaine prochaine". Filtre OData sur les métadonnées pour garantir 100% de résultats dans la fenêtre demandée.</div>
+    </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">🌐</div>
+      <div class="feat-title">Fallback recherche web (smolagents)</div>
+      <div class="feat-desc">Quand l'index Azure AI Search retourne zéro résultat, un agent smolagents déclenche automatiquement une recherche DuckDuckGo restreinte à une whitelist de 10 sites événementiels français — billetweb, eventbrite, openagenda, fnacspectacles… Initialisation lazy pour ne pas impacter le démarrage.</div>
     </div>
 
     <div class="feat-card reveal">
@@ -228,31 +320,27 @@
     <div class="feat-card reveal">
       <div class="feat-icon">🔄</div>
       <div class="feat-title">Ingestion incrémentale automatique</div>
-      <div class="feat-desc">Container App Job déclenché chaque nuit à 3h. Stratégie high-watermark sur `updatedAt`. Upsert atomique dans Azure AI Search. Pipeline Bronze → Silver → Gold.</div>
+      <div class="feat-desc">Container App Job déclenché chaque nuit à 3h. Stratégie high-watermark sur updatedAt. Upsert atomique dans Azure AI Search. Pipeline Bronze → Silver → Gold.</div>
     </div>
 
     <div class="feat-card reveal">
       <div class="feat-icon">🔐</div>
       <div class="feat-title">Authentification sécurisée</div>
-      <div class="feat-desc">Comptes utilisateurs stockés dans Cosmos DB avec mots de passe hashés (bcrypt). Login natif Chainlit. Paramètres et quotas tokens par utilisateur.</div>
-    </div>
-
-    <div class="feat-card reveal">
-      <div class="feat-icon">📊</div>
-      <div class="feat-title">Monitoring de la consommation</div>
-      <div class="feat-desc">Comptage des tokens par requête (prompt + completion) affiché en pied de chaque réponse. Cumul persisté par utilisateur dans Azure Blob Storage.</div>
-    </div>
-    <div class="feat-card reveal">
-      <div class="feat-icon">🌐</div>
-      <div class="feat-title">Fallback recherche web (smolagents)</div>
-      <div class="feat-desc">Quand l'index Azure AI Search retourne zéro résultat, un agent smolagents déclenche une recherche DuckDuckGo restreinte à une whitelist de 10 sites événementiels français (billetweb, eventbrite, openagenda, fnacspectacles…). Initialisation lazy pour ne pas impacter le démarrage.</div>
+      <div class="feat-desc">Comptes utilisateurs stockés dans Cosmos DB avec mots de passe hashés (bcrypt). Login natif Chainlit. Quotas tokens et questions configurables par utilisateur.</div>
     </div>
 
     <div class="feat-card reveal">
       <div class="feat-icon">📡</div>
       <div class="feat-title">Monitoring Grafana Cloud</div>
-      <div class="feat-desc">Stack de monitoring complète sur tier gratuit Grafana Cloud. Deux datasources : Azure Monitor (CPU, mémoire, replicas Container Apps — dashboards 16591/16592) et PostgreSQL custom (satisfaction 👍👎 Chainlit, latences RAG par phase, runs ingesteur, snapshots infrastructure Bronze/Silver/Gold).</div>
+      <div class="feat-desc">Stack de monitoring complète sur tier gratuit Grafana Cloud. Deux datasources : Azure Monitor (CPU, mémoire, replicas — dashboards 16591/16592) et PostgreSQL custom (satisfaction 👍👎, latences RAG par phase, runs ingesteur, snapshots infrastructure Bronze/Silver/Gold).</div>
     </div>
+
+    <div class="feat-card reveal">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Télémétrie RAG détaillée</div>
+      <div class="feat-desc">Chaque requête enregistre en PostgreSQL les latences par phase (condensation, search, génération), le nombre de candidats récupérés et filtrés, et le flag zéro-résultat déclencheur du fallback web.</div>
+    </div>
+
   </div>
 </section>
 
@@ -260,7 +348,7 @@
 <!-- STACK -->
 <section id="stack">
   <div class="section-header reveal">
-    <span class="section-tag">// 04 — stack technique</span>
+    <span class="section-tag">// 05 — stack technique</span>
     <div class="section-line"></div>
     <span class="section-num">choix justifiés</span>
   </div>
@@ -297,16 +385,6 @@
           <td style="color:var(--muted);font-size:0.82rem;">Recherche hybride (BM25 + vecteur) + filtres OData sur métadonnées temporelles</td>
         </tr>
         <tr>
-          <td>Fallback web</td>
-          <td><span class="stack-component">smolagents + DuckDuckGo</span></td>
-          <td style="color:var(--muted);font-size:0.82rem;">Agent CodeAgent déclenché si index retourne 0 résultat — whitelist 10 sites événementiels FR</td>
-        </tr>
-        <tr>
-          <td>Monitoring</td>
-          <td><span class="stack-component">Grafana Cloud + asyncpg</span></td>
-          <td style="color:var(--muted);font-size:0.82rem;">Azure Monitor (Container Apps) + panels custom PostgreSQL — latences RAG, satisfaction, infra snapshots</td>
-        </tr>
-        <tr>
           <td>LLM</td>
           <td><span class="stack-component">Azure OpenAI GPT-4o</span></td>
           <td style="color:var(--muted);font-size:0.82rem;">Déploiement managé Azure, conformité RGPD, streaming async</td>
@@ -317,19 +395,29 @@
           <td style="color:var(--muted);font-size:0.82rem;">Rapport qualité/coût optimal, 1536 dimensions</td>
         </tr>
         <tr>
+          <td>Fallback web</td>
+          <td><span class="stack-component">smolagents + DuckDuckGo</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Agent CodeAgent déclenché si index retourne 0 résultat — whitelist 10 sites événementiels FR</td>
+        </tr>
+        <tr>
           <td>Mémoire utilisateurs</td>
           <td><span class="stack-component">Cosmos DB</span></td>
           <td style="color:var(--muted);font-size:0.82rem;">NoSQL schemaless, latence faible, SLA 99.99%</td>
         </tr>
         <tr>
-          <td>Historique conversations</td>
+          <td>Historique + télémétrie</td>
           <td><span class="stack-component">PostgreSQL (Flexible Server)</span></td>
-          <td style="color:var(--muted);font-size:0.82rem;">Requis par SQLAlchemyDataLayer de Chainlit</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Data layer Chainlit + tables monitoring rag_telemetry, ingestor_runs, feedbacks</td>
         </tr>
         <tr>
           <td>Stockage pipeline</td>
           <td><span class="stack-component">Azure Blob Storage</span></td>
           <td style="color:var(--muted);font-size:0.82rem;">Bronze/Silver/Gold — pattern médaillon, coût minimal</td>
+        </tr>
+        <tr>
+          <td>Monitoring</td>
+          <td><span class="stack-component">Grafana Cloud + asyncpg</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;">Tier gratuit — datasources Azure Monitor (Container Apps) + PostgreSQL custom</td>
         </tr>
         <tr>
           <td>Déploiement</td>
@@ -342,23 +430,6 @@
 </section>
 
 
-<!-- CTA DEMO -->
-<section id="demo">
-  <div class="demo-box reveal">
-    <div class="demo-title">Essayer le chatbot</div>
-    <p class="demo-desc">
-      L'instance de démonstration est déployée sur Azure Container Apps. Connectez-vous avec les identifiants fournis pour explorer les recommandations d'événements culturels en France.
-    </p>
-    <a class="btn btn-primary" href="https://pulsevents-ui.happycoast-9fcef733.francecentral.azurecontainerapps.io/" target="_blank" style="display:inline-flex;margin:0 auto;">
-      → Accéder à Puls-Events AI
-    </a>
-    <p class="demo-note" id="creds-hint">
-      Authentification requise &nbsp;·&nbsp; Données OpenAgenda — France entière &nbsp;·&nbsp; Fenêtre 12 mois
-    </p>
-  </div>
-</section>
-
-
 <footer>
   <p>
     <a href="index.html" style="color:var(--accent);text-decoration:none;">← Retour au portfolio</a>
@@ -366,33 +437,14 @@
   </p>
 </footer>
 
-<div id="creds-modal" onclick="closeCreds(event)">
-  <div class="creds-box">
-    <h3>🔑 Accès démo</h3>
-    <p class="creds-line">login &nbsp;: <strong>guest</strong></p>
-    <p class="creds-line">pwd &nbsp;&nbsp;: <strong>puls-guest</strong></p>
-    <p class="creds-limit">5 questions · 10 000 tokens / jour</p>
-    <button class="creds-close" onclick="closeCreds()">[ fermer ]</button>
-  </div>
-</div>
-
 <script>
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
   document.querySelectorAll('.feat-card').forEach((c, i) => {
     c.style.transitionDelay = (i * 0.07) + 's';
   });
-  function toggleCreds() {
-    document.getElementById('creds-modal').classList.add('open');
-  }
-  function closeCreds(e) {
-    if (!e || e.target === document.getElementById('creds-modal')) {
-      document.getElementById('creds-modal').classList.remove('open');
-    }
-  }
 </script>
 
 </body>
